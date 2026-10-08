@@ -2,29 +2,30 @@
 #include "KeyPad.h"
 
 void KeyPad::init() {
-  pinMode(row1, INPUT_PULLUP);
-  pinMode(row2, INPUT_PULLUP);
-  pinMode(row3, INPUT_PULLUP);
-  pinMode(row4, INPUT_PULLUP);
-  pinMode(col1, OUTPUT);
-  pinMode(col2, OUTPUT);
-  pinMode(col3, OUTPUT);
-  pinMode(col4, OUTPUT);
-  digitalWrite(col1, HIGH);
-  digitalWrite(col2, HIGH);
-  digitalWrite(col3, HIGH);
-  digitalWrite(col4, HIGH);
+  const int rowPins[] = {row1, row2, row3, row4};
+  const int colPins[] = {col1, col2, col3, col4};
+
+  for (int i = 0; i < 4; i++) {
+    pinMode(rowPins[i], INPUT_PULLUP);
+    pinMode(colPins[i], OUTPUT);
+    digitalWrite(colPins[i], HIGH);
+  }
 }
-void KeyPad::getKey() {
-  for (int col = 0; col < 5; col++) {
-    digitalWrite(col1 + col, LOW);
-    for (int row = 0; row < 5; row++) {
-      if (digitalRead(row1 + row) == LOW) {
-        digitalWrite(col1 + col, HIGH);
+
+char KeyPad::getKey() {
+  const int rowPins[] = {row1, row2, row3, row4};
+  const int colPins[] = {col1, col2, col3, col4};
+
+  for (int col = 0; col < 4; col++) {
+    digitalWrite(colPins[col], LOW);
+    for (int row = 0; row < 4; row++) {
+      if (digitalRead(rowPins[row]) == LOW) {
+        digitalWrite(colPins[col], HIGH);
         return keys[row][col];
       }
     }
-    digitalWrite(col1 + col, HIGH);
+    digitalWrite(colPins[col], HIGH);
   }
+
   return NO_KEY;
 }
