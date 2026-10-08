@@ -176,4 +176,41 @@ void passive_buzzer_task(void *pvParameters) {
     }
 }
 
+/**
+ * @section FreeRTOS_Usage_Guide
+ * @brief Reference for instantiating and managing tasks.
+ * 
+ * CORE CONCEPTS:
+ * 1. Infinite Loops: A FreeRTOS task must never return. It must contain an 
+ *    infinite loop (e.g., for(;;)). If a task needs to end, it MUST call 
+ *    vTaskDelete(NULL) instead of returning.
+ * 
+ * 2. Non-blocking Delays: NEVER use Arduino's delay(). It halts the CPU.
+ *    Always use vTaskDelay(pdMS_TO_TICKS(ms)). This tells the RTOS scheduler 
+ *    to yield the CPU to other tasks while waiting.
+ * 
+ * 3. Dual-Core Allocation (ESP32): The ESP32-S3 has two cores (Core 0 & Core 1).
+ *    Use xTaskCreatePinnedToCore to assign heavy tasks (like I/O or displays) 
+ *    to Core 0, and critical sensor reads to Core 1.
+ * 
+ * @example setup_tasks
+ * @code
+ * void setup() {
+ *     // Example of Task Creation:
+ *     // xTaskCreatePinnedToCore(
+ *     //     TaskFunction,  // Function pointer to the task
+ *     //     "TaskName",    // String name for debugging
+ *     //     2048,          // Stack size in words (2048 is usually safe)
+ *     //     NULL,          // Task input parameter
+ *     //     1,             // Priority (0 = lowest, 24 = highest)
+ *     //     NULL,          // Task handle (for suspending/resuming)
+ *     //     1              // Core ID (0 or 1)
+ *     // );
+ * 
+ *     xTaskCreatePinnedToCore(dht_task, "DHT_Task", 2048, NULL, 1, NULL, 1);
+ *     xTaskCreatePinnedToCore(keypad_task, "Keypad_Task", 2048, NULL, 1, NULL, 0);
+ * }
+ * @endcode
+ */
+
 #endif // HARDWARE_TASKS_H
