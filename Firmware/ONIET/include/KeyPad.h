@@ -13,9 +13,12 @@ public:
   int col2;
   int col3;
   int col4;
-  char keys[4][4];
-
-  static constexpr char NO_KEY = '\0';
+  char keys[4][4] = {
+    {'1', '2', '3', 'A'},
+    {'4', '5', '6', 'B'},
+    {'7', '8', '9', 'C'},
+    {'*', '0', '#', 'D'}
+  };
 
   void init();
   char getKey();
